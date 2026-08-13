@@ -1,0 +1,117 @@
+# Project Alpha Configuration
+# All configuration options for the application
+
+websocket:
+  url: "wss://ws.binaryws.com/websockets/v3"
+  reconnect_delay: 5
+  max_reconnect_attempts: 10
+  heartbeat_interval: 30
+  timeout: 30
+
+data:
+  windows:
+    - 100
+    - 500
+    - 1000
+    - 5000
+    - 10000
+  max_buffer_size: 50000
+  update_interval: 1.0
+  validation:
+    require_bid_ask: false
+    min_price: 0.01
+    max_price: 1000000
+
+analytics:
+  confidence_threshold: 0.65
+  markov_order: 1
+  entropy_bins: 10
+  cycle_min_length: 5
+  trend_strength_min: 0.6
+  
+  thresholds:
+    hot_digit_z_score: 1.5
+    cold_digit_z_score: -1.5
+    significant_deviation: 0.2
+    entropy_low: 2.0
+    entropy_high: 3.5
+    confidence_high: 0.8
+    confidence_medium: 0.6
+    confidence_low: 0.4
+
+market_state:
+  calm_threshold: 0.2
+  volatile_threshold: 0.7
+  trend_threshold: 0.6
+  random_threshold: 0.4
+  chaotic_threshold: 0.9
+  mean_reverting_threshold: 0.5
+  momentum_threshold: 0.7
+
+ui:
+  refresh_rate: 1.0
+  max_chart_points: 500
+  dark_mode: true
+  theme_colors:
+    primary: "#2E86C1"
+    secondary: "#E67E22"
+    success: "#27AE60"
+    danger: "#E74C3C"
+    warning: "#F39C12"
+    info: "#3498DB"
+  font_family: "Inter, sans-serif"
+
+storage:
+  database_path: "data/project_alpha.db"
+  max_sessions: 1000
+  export_format: "csv"
+  archive_interval_days: 30
+
+api:
+  deriv_app_id: 1089
+  default_symbol: "R_10"
+  supported_symbols:
+    - "R_10"
+    - "R_25"
+    - "R_50"
+    - "R_75"
+    - "R_100"
+    - "BOOM_1000"
+    - "BOOM_500"
+    - "BOOM_300"
+    - "BOOM_200"
+    - "BOOM_100"
+
+features:
+  replay:
+    enabled: true
+    max_replay_speed: 10
+  recording:
+    enabled: true
+    max_recording_duration: 3600
+  export:
+    enabled: true
+    formats:
+      - csv
+      - json
+  notifications:
+    enabled: true
+    max_notifications: 100
+    severity_levels:
+      - info
+      - warning
+      - error
+      - success
+      - alert
+  plugins:
+    enabled: true
+    directory: "plugins"
+
+logging:
+  level: "INFO"
+  format: "json"
+  console_level: "INFO"
+  file_level: "DEBUG"
+  error_file_level: "ERROR"
+  max_file_size_mb: 100
+  backup_count: 5
