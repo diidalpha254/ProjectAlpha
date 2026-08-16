@@ -2,6 +2,9 @@
 Project Alpha - Main Application Entry Point
 Advanced Deriv Match/Differ Market Intelligence Platform
 """
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import streamlit as st
 import asyncio
