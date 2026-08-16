@@ -9,17 +9,17 @@ import threading
 from datetime import datetime
 from typing import Optional
 
-from core.logger import get_logger
-from core.config import settings
-from data.websocket_client import DerivWebSocketClient
-from data.processor import DataProcessor
-from data.event_bus import event_bus
-from controllers.dashboard_controller import DashboardController
-from controllers.session_controller import SessionController
-from features.replay import HistoricalReplay
-from features.recording import TickRecorder
-from features.notifications import NotificationManager
-from features.plugins import PluginManager
+from. core.logger import get_logger
+from. core.config import settings
+from. data.websocket_client import DerivWebSocketClient
+from. data.processor import DataProcessor
+from. data.event_bus import event_bus
+from .controllers.dashboard_controller import DashboardController
+from. controllers.session_controller import SessionController
+from .features.replay import HistoricalReplay
+from. features.recording import TickRecorder
+from .features.notifications import NotificationManager
+from .features.plugins import PluginManager
 
 logger = get_logger(__name__)
 
