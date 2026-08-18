@@ -15,7 +15,7 @@ from contextlib import contextmanager
 from ..core.types import Tick, SessionStats
 from ..core.exceptions import StorageError
 from ..core.logger import get_logger
-from ..config.settings import Settings
+from ..core.config import settings
 
 logger = get_logger(__name__)
 
@@ -45,8 +45,7 @@ class DatabaseManager:
         if hasattr(self, '_initialized'):
             return
             
-        self.settings = Settings()
-        self.db_path = self.settings.get("storage.database_path", "data/project_alpha.db")
+        self.db_path = settings.get("storage.database_path", "data/project_alpha.db")
         self._local = threading.local()
         self._initialized = True
         
