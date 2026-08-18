@@ -2,10 +2,6 @@
 Project Alpha - Main Application Entry Point
 Advanced Deriv Match/Differ Market Intelligence Platform
 """
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 
 import streamlit as st
 import asyncio
@@ -39,7 +35,7 @@ class ProjectAlphaApp:
     """
     Main application class that orchestrates all components.
     """
-    
+
     def __init__(self):
         """Initialize the application."""
         self.websocket_client: Optional[DerivWebSocketClient] = None
@@ -50,16 +46,16 @@ class ProjectAlphaApp:
         self.recorder: Optional[TickRecorder] = None
         self.notification_manager: Optional[NotificationManager] = None
         self.plugin_manager: Optional[PluginManager] = None
-        
+
         self._initialized = False
         self._connection_thread: Optional[threading.Thread] = None
         self._loop: Optional[asyncio.AbstractEventLoop] = None
-        
+
         # Initialize session state
         self._init_session_state()
-        
+
         logger.info("ProjectAlphaApp initialized")
-    
+
     def _init_session_state(self):
         """Initialize Streamlit session state."""
         defaults = {
@@ -78,17 +74,16 @@ class ProjectAlphaApp:
             'notifications': [],
             'error_messages': []
         }
-        
+
         for key, value in defaults.items():
             if key not in st.session_state:
                 st.session_state[key] = value
-    
+
     def initialize(self):
         """Initialize all application components."""
-               if self._initialized:
-                        return
- 
-        
+        if self._initialized:
+            return
+
         try:
             # Initialize components
             self.data_processor = DataProcessor()
@@ -98,57 +93,57 @@ class ProjectAlphaApp:
             self.recorder = TickRecorder()
             self.notification_manager = NotificationManager()
             self.plugin_manager = PluginManager()
-            
+
             # Load plugins
             self.plugin_manager.load_all_plugins()
-            
+
             # Set up event handlers
             self._setup_event_handlers()
-            
+
             self._initialized = True
             st.session_state.app_initialized = True
-            
+
             logger.info("Application initialized successfully")
-            
+
         except Exception as e:
             logger.error(f"Error initializing application: {e}", exc_info=True)
             st.error(f"Failed to initialize application: {str(e)}")
-    
+
     def _setup_event_handlers(self):
         """Set up event bus handlers."""
         # Handle processed ticks
         event_bus.subscribe('processed_tick', self._on_tick_received, async_handler=False)
-        
+
         # Handle connection status
         event_bus.subscribe('connection_status', self._on_connection_status, async_handler=False)
-        
+
         # Handle errors
         event_bus.subscribe('error', self._on_error, async_handler=False)
-        
+
         # Handle notifications
         event_bus.subscribe('notification_created', self._on_notification, async_handler=False)
-        
+
         logger.info("Event handlers setup complete")
-    
+
     def _on_tick_received(self, event):
         """Handle incoming tick."""
         tick = event.data
-        
+
         # Add to session
         if self.session_controller and not st.session_state.replay_mode:
             self.session_controller.add_tick(tick)
-        
+
         # Update session state
         if 'ticks' in st.session_state:
             st.session_state.ticks.append(tick)
             if len(st.session_state.ticks) > 50000:
                 st.session_state.ticks = st.session_state.ticks[-50000:]
-    
+
     def _on_connection_status(self, event):
         """Handle connection status changes."""
         status = event.data
         st.session_state.connection_status = status
-        
+
         if status:
             self.notification_manager.add_notification(
                 "info",
@@ -161,30 +156,30 @@ class ProjectAlphaApp:
                 "Disconnected from Deriv WebSocket API",
                 action="disconnect"
             )
-    
+
     def _on_error(self, event):
         """Handle errors."""
         error_msg = event.data
         st.session_state.error_messages.append(error_msg)
-        
+
         self.notification_manager.add_notification(
             "error",
             f"Error: {error_msg}",
             action="error"
         )
-        
+
         logger.error(f"Error event: {error_msg}")
-    
+
     def _on_notification(self, event):
         """Handle notifications."""
         notification = event.data
         if 'notifications' in st.session_state:
             st.session_state.notifications.append(notification)
-    
+
     def connect_to_deriv(self, symbol: str = "R_10", app_id: int = 1089):
         """
         Connect to Deriv WebSocket API.
-        
+
         Args:
             symbol: Trading symbol
             app_id: Deriv application ID
@@ -192,39 +187,39 @@ class ProjectAlphaApp:
         if self.websocket_client and self.websocket_client.is_connected:
             st.warning("Already connected to Deriv")
             return
-        
+
         try:
             # Create WebSocket client
             self.websocket_client = DerivWebSocketClient(app_id=app_id)
-            
+
             # Set up callbacks
             self.websocket_client.set_tick_callback(self._handle_tick)
             self.websocket_client.set_connection_callback(self._handle_connection)
             self.websocket_client.set_error_callback(self._handle_error)
-            
+
             # Create event loop for WebSocket
             self._loop = asyncio.new_event_loop()
             asyncio.set_event_loop(self._loop)
-            
+
             # Start connection in background thread
             def run_websocket():
                 asyncio.set_event_loop(self._loop)
                 self._loop.run_until_complete(self._connect_and_subscribe(symbol))
-            
+
             self._connection_thread = threading.Thread(
                 target=run_websocket,
                 name="WebSocketThread",
                 daemon=True
             )
             self._connection_thread.start()
-            
+
             st.session_state.current_symbol = symbol
             st.success(f"Connecting to {symbol}...")
-            
+
         except Exception as e:
             logger.error(f"Error connecting to Deriv: {e}")
             st.error(f"Connection failed: {str(e)}")
-    
+
     async def _connect_and_subscribe(self, symbol: str):
         """Connect and subscribe to symbol."""
         try:
@@ -233,7 +228,7 @@ class ProjectAlphaApp:
             if not connected:
                 logger.error("Failed to connect to WebSocket")
                 return
-            
+
             # Subscribe to symbol
             subscribed = await self.websocket_client.subscribe(symbol)
             if subscribed:
@@ -241,30 +236,30 @@ class ProjectAlphaApp:
                 logger.info(f"Subscribed to {symbol}")
             else:
                 logger.error(f"Failed to subscribe to {symbol}")
-                
+
         except Exception as e:
             logger.error(f"Error in WebSocket connection: {e}")
             event_bus.publish("error", str(e), "WebSocket")
-    
+
     def _handle_tick(self, tick):
         """Handle tick from WebSocket."""
         # Emit raw tick event
         event_bus.publish("raw_tick", tick, "WebSocket")
-    
+
     def _handle_connection(self, connected: bool):
         """Handle connection status change."""
         event_bus.publish("connection_status", connected, "WebSocket")
-        
+
         if connected:
             st.success("Connected to Deriv WebSocket API")
         else:
             st.warning("Disconnected from Deriv WebSocket API")
-    
+
     def _handle_error(self, error: str):
         """Handle WebSocket error."""
         event_bus.publish("error", error, "WebSocket")
         st.error(f"WebSocket error: {error}")
-    
+
     def disconnect_from_deriv(self):
         """Disconnect from Deriv WebSocket API."""
         if self.websocket_client:
@@ -274,53 +269,53 @@ class ProjectAlphaApp:
                     self.websocket_client.disconnect(),
                     self._loop
                 )
-            
+
             self.websocket_client = None
             st.session_state.connection_status = False
             logger.info("Disconnected from Deriv")
             st.success("Disconnected from Deriv")
-    
+
     def render(self):
         """Render the main application."""
         # Initialize if not done
         if not st.session_state.app_initialized:
             self.initialize()
-        
+
         # Render header
         self._render_header()
-        
+
         # Render main content
         self.dashboard_controller.render_dashboard()
-        
+
         # Render footer
         self._render_footer()
-    
+
     def _render_header(self):
         """Render application header."""
         col1, col2, col3 = st.columns([1, 2, 1])
-        
+
         with col1:
             st.markdown("### 📊 Project Alpha")
-        
+
         with col2:
             # Status indicators
             status_color = "🟢" if st.session_state.connection_status else "🔴"
             status_text = "Connected" if st.session_state.connection_status else "Disconnected"
             st.markdown(f"<div style='text-align: center;'>{status_color} {status_text}</div>", unsafe_allow_html=True)
-        
+
         with col3:
             # Current time
             current_time = datetime.now().strftime("%H:%M:%S")
             st.markdown(f"<div style='text-align: right;'>🕐 {current_time}</div>", unsafe_allow_html=True)
-        
+
         st.divider()
-    
+
     def _render_footer(self):
         """Render application footer."""
         st.divider()
-        
+
         col1, col2, col3 = st.columns(3)
-        
+
         with col1:
             st.markdown(
                 """
@@ -330,7 +325,7 @@ class ProjectAlphaApp:
                 """,
                 unsafe_allow_html=True
             )
-        
+
         with col2:
             st.markdown(
                 """
@@ -340,7 +335,7 @@ class ProjectAlphaApp:
                 """,
                 unsafe_allow_html=True
             )
-        
+
         with col3:
             tick_count = len(st.session_state.ticks)
             st.markdown(
@@ -351,7 +346,7 @@ class ProjectAlphaApp:
                 """,
                 unsafe_allow_html=True
             )
-    
+
     def cleanup(self):
         """Clean up resources on shutdown."""
         try:
@@ -362,13 +357,13 @@ class ProjectAlphaApp:
                         self.websocket_client.disconnect(),
                         self._loop
                     )
-            
+
             # Close WebDriver for screenshots
             if hasattr(self, 'screenshot_capture'):
                 self.screenshot_capture.close()
-            
+
             logger.info("Application cleanup complete")
-            
+
         except Exception as e:
             logger.error(f"Error during cleanup: {e}")
 
@@ -382,11 +377,11 @@ def main():
     try:
         # Render the application
         app.render()
-        
+
     except KeyboardInterrupt:
         logger.info("Application interrupted by user")
         app.cleanup()
-        
+
     except Exception as e:
         logger.error(f"Application error: {e}", exc_info=True)
         st.error(f"Application error: {str(e)}")
