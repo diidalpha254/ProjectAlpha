@@ -5,73 +5,7 @@ Detects patterns, cycles, and streaks in digit sequences.
 
 from typing import List, Dict, Tuple, Optional, Set
 from collections import Counter, defaultdict
-import numpy as np
-from datetime import datetime
-
-from ..core.types import ConsecutiveStreak
-from ..core.logger import get_logger
-
-logger = get_logger(__name__)
-
-
-@dataclass
-class PatternResult:
-    """Results from pattern analysis."""
-    repeated_patterns: List[Tuple[List[int], int]]  # Pattern and frequency
-    longest_streak: Tuple[int, int]  # (digit, length)
-    current_streak: Tuple[int, int]  # (digit, length)
-    cycle_lengths: List[int]
-    dominant_pattern: List[int]
-    confidence: float
-    timestamp: datetime
-
-
-class PatternAnalyzer:
-    """
-    Detects patterns, cycles, and streaks in digit sequences.
-    Uses various pattern recognition techniques.
-    """
-    
-    def __init__(self, min_pattern_length: int = 2, max_pattern_length: int = 5):
-        """
-        Initialize the pattern analyzer.
-        
-        Args:
-            min_pattern_length: Minimum pattern length to detect
-            max_pattern_length: Maximum pattern length to detect
-        """
-        self.min_pattern_length = min_pattern_length
-        self.max_pattern_length = max_pattern_length
-        self._cache = {}
-        logger.info(f"PatternAnalyzer initialized (min_len={min_pattern_length}, max_len={max_pattern_length})")
-    
-    def analyze(self, digits: List[int]) -> PatternResult:
-        """
-        Perform comprehensive pattern analysis.
-        
-        Args:
-            digits: List of digits
-            
-        Returns:
-            PatternResult: Pattern analysis results
-        """
-        if len(digits) < 2:
-            return self._empty_result()
-        
-        # Find repeated patterns
-        repeated_patterns = self._find_repeated_patterns(digits)
-        
-        # Find longest streak
-        longest_streak = self._find_longest_streak(digits)
-        
-        # Find current streak
-        current_streak ="""
-Pattern Recognition Module
-Detects patterns, cycles, and streaks in digit sequences.
-"""
-
-from typing import List, Dict, Tuple, Optional, Set
-from collections import Counter, defaultdict
+from dataclasses import dataclass
 import numpy as np
 from datetime import datetime
 
