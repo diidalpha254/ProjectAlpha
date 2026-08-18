@@ -12,11 +12,11 @@ from datetime import datetime
 import websockets
 from websockets.exceptions import ConnectionClosed, WebSocketException
 
-from ..core.constants import DerivSymbol
-from ..core.exceptions import ConnectionError, WebsocketError
-from ..core.logger import get_logger
-from ..core.types import Tick
-from ..config.settings import Settings
+from app.core.constants import DerivSymbol
+from app.core.exceptions import ConnectionError, WebsocketError
+from app.core.logger import get_logger
+from app.core.types import Tick
+from app.core.config import settings
 
 logger = get_logger(__name__)
 
@@ -38,12 +38,11 @@ class DerivWebSocketClient:
         Args:
             app_id: Deriv application ID (default: 1089 for test)
         """
-        self.settings = Settings()
         self.app_id = app_id
-        self.ws_url = self.settings.get("websocket.url")
-        self.reconnect_delay = self.settings.get("websocket.reconnect_delay", 5)
-        self.max_reconnect_attempts = self.settings.get("websocket.max_reconnect_attempts", 10)
-        self.heartbeat_interval = self.settings.get("websocket.heartbeat_interval", 30)
+        self.ws_url = settings.get("websocket.url", "wss://ws.binaryws.com/websockets/v3")
+        self.reconnect_delay = settings.get("websocket.reconnect_delay", 5)
+        self.max_reconnect_attempts = settings.get("websocket.max_reconnect_attempts", 10)
+        self.heartbeat_interval = settings.get("websocket.heartbeat_interval", 30)
         
         self._websocket: Optional[websockets.WebSocketClientProtocol] = None
         self._connected = False
@@ -220,7 +219,6 @@ class DerivWebSocketClient:
             
             # Check for subscription events
             if data.get("msg_type") == "tick":
-                # Already handled above
                 pass
                 
             # Check for errors
@@ -509,7 +507,7 @@ class DerivWebSocketClient:
                     price = float(tick_value)
                     last_digit = int(str(price)[-1])
                     tick = Tick(
-                        timestamp=datetime.now(),  # Will be overridden by epoch if available
+                        timestamp=datetime.now(),
                         symbol=symbol,
                         price=price,
                         last_digit=last_digit
