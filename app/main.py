@@ -85,8 +85,9 @@ class ProjectAlphaApp:
     
     def initialize(self):
         """Initialize all application components."""
-        if self._initialized:
-            return
+               if self._initialized:
+                        return
+ 
         
         try:
             # Initialize components
