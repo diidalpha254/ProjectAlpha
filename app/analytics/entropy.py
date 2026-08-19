@@ -9,8 +9,9 @@ from collections import Counter
 from datetime import datetime
 from dataclasses import dataclass
 
-from ..core.types import EntropyAnalysis
-from ..core.logger import get_logger
+from core.types import EntropyAnalysis
+from core.logger import get_logger
+
 
 logger = get_logger(__name__)
 
