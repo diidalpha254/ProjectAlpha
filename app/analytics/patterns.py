@@ -9,8 +9,9 @@ from dataclasses import dataclass
 import numpy as np
 from datetime import datetime
 
-from app.core.types import ConsecutiveStreak
-from app.core.logger import get_logger
+from core.types import ConsecutiveStreak
+from core.logger import get_logger
+
 
 logger = get_logger(__name__)
 
