@@ -11,8 +11,9 @@ from dataclasses import dataclass
 from datetime import datetime
 import uuid
 
-from ..core.types import Tick
-from ..core.logger import get_logger
+from core.types import Tick
+from core.logger import get_logger
+
 
 logger = get_logger(__name__)
 
