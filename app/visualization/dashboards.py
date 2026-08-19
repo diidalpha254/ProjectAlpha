@@ -9,10 +9,10 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import datetime
 
-from ..core.types import Tick, MarketStateAnalysis
-from ..core.constants import MarketState, DIGIT_COLORS
-from ..core.logger import get_logger
-from .charts import ChartBuilder
+from core.types import Tick, MarketStateAnalysis
+from core.constants import MarketState, DIGIT_COLORS
+from core.logger import get_logger
+from.charts import ChartBuilder
 
 logger = get_logger(__name__)
 
