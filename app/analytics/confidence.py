@@ -7,7 +7,8 @@ from typing import Dict, List, Any, Optional
 import numpy as np
 from datetime import datetime
 
-from ..core.logger import get_logger
+from core.logger import get_logger
+
 
 logger = get_logger(__name__)
 
