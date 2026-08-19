@@ -8,10 +8,11 @@ from collections import deque
 from datetime import datetime
 import threading
 
-from ..core.types import Tick, RollingWindow
-from ..core.constants import WindowSize
-from ..core.logger import get_logger
-from ..core.exceptions import DataValidationError
+from core.types import Tick, RollingWindow
+from core.constants import WindowSize
+from core.logger import get_logger
+from core.exceptions import DataValidationError
+
 
 logger = get_logger(__name__)
 
