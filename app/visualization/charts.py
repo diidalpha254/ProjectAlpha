@@ -10,9 +10,9 @@ from plotly.subplots import make_subplots
 import numpy as np
 from datetime import datetime
 
-from ..core.types import Tick
-from ..core.constants import DIGIT_COLORS, MARKET_STATE_DESCRIPTIONS
-from ..core.logger import get_logger
+from core.types import Tick
+from core.constants import DIGIT_COLORS, MARKET_STATE_DESCRIPTIONS
+from core.logger import get_logger
 
 logger = get_logger(__name__)
 
