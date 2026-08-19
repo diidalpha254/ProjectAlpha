@@ -9,10 +9,11 @@ from datetime import datetime
 from decimal import Decimal
 import uuid
 
-from ..core.types import Tick
-from ..core.exceptions import DataValidationError
-from ..core.logger import get_logger
-from ..core.constants import DerivSymbol
+from core.types import Tick
+from core.exceptions import DataValidationError
+from core.logger import get_logger
+from core.constants import DerivSymbol
+
 
 logger = get_logger(__name__)
 
