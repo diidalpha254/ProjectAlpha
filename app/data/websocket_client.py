@@ -12,11 +12,12 @@ from datetime import datetime
 import websockets
 from websockets.exceptions import ConnectionClosed, WebSocketException
 
-from app.core.constants import DerivSymbol
-from app.core.exceptions import ConnectionError, WebsocketError
-from app.core.logger import get_logger
-from app.core.types import Tick
-from app.core.config import settings
+from core.constants import DerivSymbol
+from core.exceptions import ConnectionError, WebsocketError
+from core.logger import get_logger
+from core.types import Tick
+from core.config import settings
+
 
 logger = get_logger(__name__)
 
