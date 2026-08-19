@@ -8,8 +8,9 @@ import numpy as np
 from datetime import datetime
 from dataclasses import dataclass
 
-from ..core.types import VolatilityMetrics
-from ..core.logger import get_logger
+from core.types import VolatilityMetrics
+from core.logger import get_logger
+
 
 logger = get_logger(__name__)
 
