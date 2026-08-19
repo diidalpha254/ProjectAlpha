@@ -10,9 +10,10 @@ import numpy as np
 from dataclasses import dataclass, field
 import threading
 
-from ..core.types import Tick
-from ..core.logger import get_logger
-from ..core.exceptions import DataValidationError
+from core.types import Tick
+from core.logger import get_logger
+from core.exceptions import DataValidationError
+
 
 logger = get_logger(__name__)
 
