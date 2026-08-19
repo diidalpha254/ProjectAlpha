@@ -8,9 +8,9 @@ from datetime import datetime
 import numpy as np
 from dataclasses import dataclass
 
-from ..core.types import Tick
-from ..core.logger import get_logger
-from ..core.exceptions import AnalyticsError
+from core.types import Tick
+from core.logger import get_logger
+from core.exceptions import AnalyticsError
 from .frequency import FrequencyAnalyzer
 from .markov import MarkovAnalyzer
 from .entropy import EntropyAnalyzer
