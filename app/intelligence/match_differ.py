@@ -8,11 +8,12 @@ from datetime import datetime
 import numpy as np
 from dataclasses import dataclass
 
-from ..core.types import Tick, MatchDifferInsight
-from ..core.constants import MarketState
-from ..core.logger import get_logger
-from ..analytics.engine import AnalyticsEngine
-from ..market_state.classifier import MarketClassifier
+from core.types import Tick, MatchDifferInsight
+from core.constants import MarketState
+from core.logger import get_logger
+from analytics.engine import AnalyticsEngine
+from market_state.classifier import MarketClassifier
+
 
 logger = get_logger(__name__)
 
