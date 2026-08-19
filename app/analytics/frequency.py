@@ -9,9 +9,10 @@ import numpy as np
 from datetime import datetime
 from dataclasses import dataclass
 
-from ..core.types import Tick, FrequencyAnalysis
-from ..core.constants import STATISTICAL_THRESHOLDS
-from ..core.logger import get_logger
+from core.types import Tick, FrequencyAnalysis
+from core.constants import STATISTICAL_THRESHOLDS
+from core.logger import get_logger
+
 
 logger = get_logger(__name__)
 
