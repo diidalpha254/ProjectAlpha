@@ -8,8 +8,9 @@ from datetime import datetime, timedelta
 import numpy as np
 from collections import deque
 
-from ..core.types import Tick
-from ..core.logger import get_logger
+from core.types import Tick
+from core.logger import get_logger
+
 
 logger = get_logger(__name__)
 
