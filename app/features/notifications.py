@@ -12,7 +12,7 @@ from collections import deque
 from core.types import Notification
 from core.constants import NotificationType
 from core.logger import get_logger
- from data.event_bus import event_bus
+from data.event_bus import event_bus
 
 
 logger = get_logger(__name__)
