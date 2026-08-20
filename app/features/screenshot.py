@@ -11,7 +11,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from PIL import Image
 
-from ..core.logger import get_logger
+from core.logger import get_logger
+
 
 logger = get_logger(__name__)
 
