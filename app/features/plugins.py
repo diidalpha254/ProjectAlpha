@@ -9,8 +9,9 @@ import inspect
 from pathlib import Path
 import json
 
-from ..core.logger import get_logger
-from ..data.event_bus import event_bus
+from core.logger import get_logger
+from data.event_bus import event_bus
+
 
 logger = get_logger(__name__)
 
