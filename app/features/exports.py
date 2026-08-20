@@ -10,9 +10,9 @@ import json
 import csv
 from io import StringIO, BytesIO
 
-13  from core.types import Tick
-14  from core.logger import get_logger
-15  from storage.database import DatabaseManager
+from core.types import Tick
+from core.logger import get_logger
+ from storage.database import DatabaseManager
 
 
 logger = get_logger(__name__)
