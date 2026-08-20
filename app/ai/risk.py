@@ -6,8 +6,9 @@ Communicates risk assessments and warnings in a clear, transparent manner.
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 
-from ..core.constants import RiskLevel, MarketState
-from ..core.logger import get_logger
+from core.constants import RiskLevel, MarketState
+from core.logger import get_logger
+
 
 logger = get_logger(__name__)
 
