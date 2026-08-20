@@ -12,7 +12,7 @@ from io import StringIO, BytesIO
 
 from core.types import Tick
 from core.logger import get_logger
- from storage.database import DatabaseManager
+from storage.database import DatabaseManager
 
 
 logger = get_logger(__name__)
