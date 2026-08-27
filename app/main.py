@@ -285,7 +285,7 @@ class ProjectAlphaApp:
         self._render_header()
 
         # Render main content
-       if self.dashboard_controller:
+                 if self.dashboard_controller:
             self.dashboard_controller.render_dashboard()
         else:
             st.warning("⚠️ Please configure your App ID and Token in the Secrets manager to connect.")
