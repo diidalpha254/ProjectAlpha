@@ -30,13 +30,26 @@ class Config:
                 self.config = yaml.safe_load(f)
     
     def _load_env_vars(self):
-        """Load environment variables."""
-        # WebSocket
+        """Load environment variables with safe defaults."""
+        # Deriv App ID - from SECRETS
+        app_id_str = os.getenv("DERIV_APP_ID")
+        if app_id_str is not None and app_id_str.strip():
+            try:
+                self.config.setdefault("api", {})["deriv_app_id"] = int(app_id_str)
+            except ValueError:
+                self.config.setdefault("api", {})["deriv_app_id"] = 1089
+        else:
+            # If not set, use default
+            self.config.setdefault("api", {})["deriv_app_id"] = 1089
+        
+        # Deriv API Token - from SECRETS (optional)
+        token = os.getenv("DERIV_TOKEN")
+        if token is not None and token.strip():
+            self.config.setdefault("api", {})["deriv_token"] = token
+        
+        # WebSocket URL
         if ws_url := os.getenv("DERIV_WS_URL"):
             self.config.setdefault("websocket", {})["url"] = ws_url
-        
-        if app_id := os.getenv("DERIV_APP_ID"):
-            self.config.setdefault("api", {})["deriv_app_id"] = int(app_id)
         
         # Database
         if db_path := os.getenv("PROJECT_ALPHA_DB"):
