@@ -31,6 +31,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+
 class ProjectAlphaApp:
     """
     Main application class that orchestrates all components.
@@ -57,7 +58,7 @@ class ProjectAlphaApp:
         logger.info("ProjectAlphaApp initialized")
 
     def _init_session_state(self):
-        """Initialize Streamlit session state."""
+        """Initialize Streamlit session state variables."""
         defaults = {
             'app_initialized': False,
             'connection_status': False,
@@ -80,22 +81,63 @@ class ProjectAlphaApp:
                 st.session_state[key] = value
 
     def initialize(self):
-        """Initialize all application components."""
+        """Initialize all application components with error handling."""
         if self._initialized:
             return
 
         try:
-            # Initialize components
-            self.data_processor = DataProcessor()
-            self.dashboard_controller = DashboardController()
-            self.session_controller = SessionController()
-            self.replay_engine = HistoricalReplay()
-            self.recorder = TickRecorder()
-            self.notification_manager = NotificationManager()
-            self.plugin_manager = PluginManager()
+            st.info("🔄 Initializing application components...")
 
-            # Load plugins
-            self.plugin_manager.load_all_plugins()
+            # Initialize components one by one with error handling
+            try:
+                self.data_processor = DataProcessor()
+                st.success("✅ Data Processor initialized")
+            except Exception as e:
+                st.error(f"❌ Data Processor failed: {e}")
+                raise
+
+            try:
+                self.dashboard_controller = DashboardController()
+                st.success("✅ Dashboard Controller initialized")
+            except Exception as e:
+                st.error(f"❌ Dashboard Controller failed: {e}")
+                raise
+
+            try:
+                self.session_controller = SessionController()
+                st.success("✅ Session Controller initialized")
+            except Exception as e:
+                st.error(f"❌ Session Controller failed: {e}")
+                raise
+
+            try:
+                self.replay_engine = HistoricalReplay()
+                st.success("✅ Replay Engine initialized")
+            except Exception as e:
+                st.error(f"❌ Replay Engine failed: {e}")
+                raise
+
+            try:
+                self.recorder = TickRecorder()
+                st.success("✅ Tick Recorder initialized")
+            except Exception as e:
+                st.error(f"❌ Tick Recorder failed: {e}")
+                raise
+
+            try:
+                self.notification_manager = NotificationManager()
+                st.success("✅ Notification Manager initialized")
+            except Exception as e:
+                st.error(f"❌ Notification Manager failed: {e}")
+                raise
+
+            try:
+                self.plugin_manager = PluginManager()
+                self.plugin_manager.load_all_plugins()
+                st.success("✅ Plugin Manager initialized")
+            except Exception as e:
+                st.error(f"❌ Plugin Manager failed: {e}")
+                raise
 
             # Set up event handlers
             self._setup_event_handlers()
@@ -103,11 +145,13 @@ class ProjectAlphaApp:
             self._initialized = True
             st.session_state.app_initialized = True
 
-            logger.info("Application initialized successfully")
+            st.success("🎉 Application initialized successfully!")
 
         except Exception as e:
             logger.error(f"Error initializing application: {e}", exc_info=True)
-            st.error(f"Failed to initialize application: {str(e)}")
+            st.error(f"❌ Failed to initialize application: {str(e)}")
+            st.info("Please check the logs for more details.")
+            self._initialized = False
 
     def _setup_event_handlers(self):
         """Set up event bus handlers."""
@@ -284,14 +328,27 @@ class ProjectAlphaApp:
         # Render header
         self._render_header()
 
-        # Render main content
-                 if self.dashboard_controller:
-            self.dashboard_controller.render_dashboard()
+        # Render main content with proper error handling
+        if self.dashboard_controller is not None:
+            try:
+                self.dashboard_controller.render_dashboard()
+            except Exception as e:
+                st.error(f"❌ Dashboard error: {str(e)}")
+                st.info("Please check the logs for more details.")
         else:
-            st.warning("⚠️ Please configure your App ID and Token in the Secrets manager to connect.")
-
-
-
+            # Show a helpful message instead of the misleading warning
+            st.warning("⚠️ Dashboard controller not available. Please rebuild the app.")
+            st.info("Go to Streamlit Cloud → More → Rebuild")
+            st.markdown("""
+            ### 🔧 How to fix:
+            1. Go to **Streamlit Cloud** dashboard
+            2. Click on your app → **More** → **Rebuild**
+            3. Wait for the rebuild to complete
+            4. Refresh this page
+            """)
+            if st.button("🔄 Rebuild Now"):
+                st.cache_data.clear()
+                st.rerun()
 
         # Render footer
         self._render_footer()
@@ -343,7 +400,7 @@ class ProjectAlphaApp:
             )
 
         with col3:
-            tick_count = len(st.session_state.ticks)
+            tick_count = len(st.session_state.ticks) if 'ticks' in st.session_state else 0
             st.markdown(
                 f"""
                 <div style='text-align: center; font-size: 12px; color: #666;'>
@@ -377,6 +434,7 @@ class ProjectAlphaApp:
 # Create application instance
 app = ProjectAlphaApp()
 
+
 # Main entry point
 def main():
     """Main application entry point."""
@@ -392,6 +450,7 @@ def main():
         logger.error(f"Application error: {e}", exc_info=True)
         st.error(f"Application error: {str(e)}")
         app.cleanup()
+
 
 if __name__ == "__main__":
     main()
