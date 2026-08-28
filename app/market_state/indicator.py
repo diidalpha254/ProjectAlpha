@@ -6,10 +6,9 @@ Provides specialized indicators for market state classification.
 from typing import Dict, List, Any, Optional, Tuple
 import numpy as np
 from datetime import datetime
+from collections import Counter
 
-from core.constants import MarketState
-from core.logger import get_logger
-
+from ..core.logger import get_logger
 
 logger = get_logger(__name__)
 
@@ -43,23 +42,11 @@ class MarketIndicators:
             indicators = {
                 'timestamp': datetime.now(),
                 'sample_size': len(ticks),
-                
-                # Price indicators
                 'price_metrics': self._calculate_price_metrics(prices),
-                
-                # Digit indicators
                 'digit_metrics': self._calculate_digit_metrics(digits),
-                
-                # Volatility indicators
                 'volatility_metrics': self._calculate_volatility_metrics(prices),
-                
-                # Trend indicators
                 'trend_metrics': self._calculate_trend_metrics(prices),
-                
-                # Momentum indicators
                 'momentum_metrics': self._calculate_momentum_metrics(prices),
-                
-                # Pattern indicators
                 'pattern_metrics': self._calculate_pattern_metrics(digits),
             }
             
@@ -73,9 +60,7 @@ class MarketIndicators:
         """Calculate price-based metrics."""
         if not prices:
             return {}
-        
         prices = np.array(prices)
-        
         return {
             'mean': float(np.mean(prices)),
             'median': float(np.median(prices)),
@@ -91,26 +76,15 @@ class MarketIndicators:
         """Calculate digit-based metrics."""
         if not digits:
             return {}
-        
-        from collections import Counter
         counts = Counter(digits)
         total = len(digits)
-        
-        # Calculate frequencies
         frequencies = {i: counts.get(i, 0) / total for i in range(10)}
-        
-        # Calculate entropy
         probs = [freq for freq in frequencies.values() if freq > 0]
         entropy = -sum(p * np.log2(p) for p in probs) if probs else 0
-        
-        # Find hot and cold digits
         expected = 0.1
         hot_digits = [i for i, freq in frequencies.items() if freq > expected * 1.5]
         cold_digits = [i for i, freq in frequencies.items() if freq < expected * 0.5]
-        
-        # Calculate streaks
         streaks = self._calculate_digit_streaks(digits)
-        
         return {
             'counts': dict(counts),
             'frequencies': frequencies,
@@ -127,11 +101,9 @@ class MarketIndicators:
         """Calculate consecutive streaks for each digit."""
         if not digits:
             return {}
-        
         streaks = {i: 0 for i in range(10)}
         current_digit = digits[0]
         current_streak = 1
-        
         for digit in digits[1:]:
             if digit == current_digit:
                 current_streak += 1
@@ -139,7 +111,6 @@ class MarketIndicators:
                 streaks[current_digit] = max(streaks[current_digit], current_streak)
                 current_digit = digit
                 current_streak = 1
-        
         streaks[current_digit] = max(streaks[current_digit], current_streak)
         return streaks
     
@@ -147,49 +118,36 @@ class MarketIndicators:
         """Calculate current consecutive streak."""
         if not digits:
             return 0
-        
         current_digit = digits[-1]
         streak = 1
-        
         for i in range(len(digits) - 2, -1, -1):
             if digits[i] == current_digit:
                 streak += 1
             else:
                 break
-        
         return streak
     
     def _calculate_volatility_metrics(self, prices: List[float]) -> Dict[str, float]:
         """Calculate volatility metrics."""
         if len(prices) < 2:
             return {}
-        
         prices = np.array(prices)
-        
-        # Calculate returns
         returns = np.diff(prices) / prices[:-1]
-        
-        # Calculate volatility
-        volatility = np.std(returns) * np.sqrt(252)  # Annualized
-        
-        # Calculate range volatility
+        volatility = np.std(returns) * np.sqrt(252)
         high = np.max(prices)
         low = np.min(prices)
-        range_volatility = (high - low) / np.mean(prices)
-        
-        # Calculate average true range
+        range_volatility = (high - low) / np.mean(prices) if np.mean(prices) != 0 else 0
         if len(prices) > 1:
             true_ranges = []
             for i in range(1, len(prices)):
-                high = prices[i]
-                low = prices[i]
-                prev_close = prices[i-1]
-                tr = max(high - low, abs(high - prev_close), abs(low - prev_close))
+                h = prices[i]
+                l = prices[i]
+                pc = prices[i-1]
+                tr = max(h - l, abs(h - pc), abs(l - pc))
                 true_ranges.append(tr)
             atr = np.mean(true_ranges)
         else:
             atr = 0
-        
         return {
             'volatility': volatility,
             'range_volatility': range_volatility,
@@ -202,25 +160,15 @@ class MarketIndicators:
         """Calculate trend metrics."""
         if len(prices) < 3:
             return {}
-        
         x = np.arange(len(prices))
         y = np.array(prices)
-        
-        # Linear regression
         slope, intercept = np.polyfit(x, y, 1)
-        
-        # R-squared
         y_pred = slope * x + intercept
         ss_tot = np.sum((y - np.mean(y)) ** 2)
         ss_res = np.sum((y - y_pred) ** 2)
         r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
-        
-        # Trend strength
         trend_strength = min(abs(slope) * 100, 1.0)
-        
-        # Direction
         direction = 'up' if slope > 0.001 else 'down' if slope < -0.001 else 'neutral'
-        
         return {
             'slope': slope,
             'intercept': intercept,
@@ -233,27 +181,13 @@ class MarketIndicators:
         """Calculate momentum metrics."""
         if len(prices) < 5:
             return {}
-        
         prices = np.array(prices)
-        
-        # Short-term momentum
         short_returns = (prices[-1] - prices[-5]) / prices[-5] if len(prices) >= 5 else 0
-        
-        # Medium-term momentum
         mid_returns = (prices[-1] - prices[-20]) / prices[-20] if len(prices) >= 20 else short_returns
-        
-        # Long-term momentum
         long_returns = (prices[-1] - prices[-50]) / prices[-50] if len(prices) >= 50 else mid_returns
-        
-        # ROC (Rate of Change)
         roc = (prices[-1] - prices[0]) / prices[0] if prices[0] > 0 else 0
-        
-        # Momentum strength
         momentum_strength = min(abs(short_returns) * 100, 1.0)
-        
-        # Direction
         direction = 'up' if short_returns > 0.001 else 'down' if short_returns < -0.001 else 'neutral'
-        
         return {
             'short_momentum': short_returns,
             'mid_momentum': mid_returns,
@@ -267,11 +201,9 @@ class MarketIndicators:
         """Calculate pattern metrics."""
         if len(digits) < 5:
             return {}
-        
         from ..analytics.patterns import PatternAnalyzer
         analyzer = PatternAnalyzer()
         result = analyzer.analyze(digits)
-        
         return {
             'has_patterns': len(result.repeated_patterns) > 0,
             'pattern_count': len(result.repeated_patterns),
