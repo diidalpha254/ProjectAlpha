@@ -8,7 +8,8 @@ import numpy as np
 from datetime import datetime
 from collections import Counter
 
-from ..core.logger import get_logger
+from core.logger import get_logger
+
 
 logger = get_logger(__name__)
 
