@@ -8,6 +8,7 @@ import streamlit as st
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import datetime
+import numpy as np
 
 from core.types import Tick, MarketStateAnalysis
 from core.constants import MarketState, DIGIT_COLORS
