@@ -4,6 +4,13 @@ Manages the main dashboard state, data flow, and UI interactions.
 """
 
 # ============================================================
+# 🔧 Add 'app' folder to Python path (so we don't need 'app.' prefix)
+# ============================================================
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+# ============================================================
 # 🔍 DEBUG: Show which imports are loading
 # ============================================================
 print("🔍 Loading dashboard_controller.py...")
@@ -34,7 +41,7 @@ except Exception as e:
 
 try:
     print("  → Importing core types...")
-    from ..core.types import Tick, MarketStateAnalysis, AIInsight
+    from core.types import Tick, MarketStateAnalysis, AIInsight
     print("  → ✅ core types imported")
 except Exception as e:
     print(f"  → ❌ core types failed: {e}")
@@ -42,7 +49,7 @@ except Exception as e:
 
 try:
     print("  → Importing core constants...")
-    from ..core.constants import MarketState, RiskLevel, DIGIT_COLORS
+    from core.constants import MarketState, RiskLevel, DIGIT_COLORS
     print("  → ✅ core constants imported")
 except Exception as e:
     print(f"  → ❌ core constants failed: {e}")
@@ -50,7 +57,7 @@ except Exception as e:
 
 try:
     print("  → Importing core logger...")
-    from ..core.logger import get_logger
+    from core.logger import get_logger
     print("  → ✅ core logger imported")
 except Exception as e:
     print(f"  → ❌ core logger failed: {e}")
@@ -58,7 +65,7 @@ except Exception as e:
 
 try:
     print("  → Importing data processor...")
-    from ..data.processor import DataProcessor
+    from data.processor import DataProcessor
     print("  → ✅ data processor imported")
 except Exception as e:
     print(f"  → ❌ data processor failed: {e}")
@@ -66,7 +73,7 @@ except Exception as e:
 
 try:
     print("  → Importing event bus...")
-    from ..data.event_bus import event_bus
+    from data.event_bus import event_bus
     print("  → ✅ event bus imported")
 except Exception as e:
     print(f"  → ❌ event bus failed: {e}")
@@ -74,7 +81,7 @@ except Exception as e:
 
 try:
     print("  → Importing analytics engine...")
-    from ..analytics.engine import AnalyticsEngine
+    from analytics.engine import AnalyticsEngine
     print("  → ✅ analytics engine imported")
 except Exception as e:
     print(f"  → ❌ analytics engine failed: {e}")
@@ -82,7 +89,7 @@ except Exception as e:
 
 try:
     print("  → Importing market classifier...")
-    from ..market_state.classifier import MarketClassifier
+    from market_state.classifier import MarketClassifier
     print("  → ✅ market classifier imported")
 except Exception as e:
     print(f"  → ❌ market classifier failed: {e}")
@@ -90,7 +97,7 @@ except Exception as e:
 
 try:
     print("  → Importing match differ intelligence...")
-    from ..intelligence.match_differ import MatchDifferIntelligence
+    from intelligence.match_differ import MatchDifferIntelligence
     print("  → ✅ match differ intelligence imported")
 except Exception as e:
     print(f"  → ❌ match differ intelligence failed: {e}")
@@ -98,7 +105,7 @@ except Exception as e:
 
 try:
     print("  → Importing AI insights...")
-    from ..ai.insights import AIInsightsEngine
+    from ai.insights import AIInsightsEngine
     print("  → ✅ AI insights imported")
 except Exception as e:
     print(f"  → ❌ AI insights failed: {e}")
@@ -106,7 +113,7 @@ except Exception as e:
 
 try:
     print("  → Importing dashboard builder...")
-    from ..visualization.dashboards import DashboardBuilder
+    from visualization.dashboards import DashboardBuilder
     print("  → ✅ dashboard builder imported")
 except Exception as e:
     print(f"  → ❌ dashboard builder failed: {e}")
@@ -114,7 +121,7 @@ except Exception as e:
 
 try:
     print("  → Importing theme manager...")
-    from ..visualization.theme import ThemeManager
+    from visualization.theme import ThemeManager
     print("  → ✅ theme manager imported")
 except Exception as e:
     print(f"  → ❌ theme manager failed: {e}")
